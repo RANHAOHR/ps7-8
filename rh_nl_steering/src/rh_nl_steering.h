@@ -41,9 +41,8 @@ public:
     double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);   
     double min_dang(double dang);  
     double sat(double x);
-	
-	geometry_msgs::Quaternion SteeringController::convertPlanarPsi2Quaternion(double psi);
-	geometry_msgs::PoseStamped SteeringController::xyPsi2PoseStamped(double x, double y, double psi);
+
+
 private:
     ros::NodeHandle nh_; // we will need this, to pass between "main" and constructor
     // some objects to support subscriber and publisher
@@ -56,7 +55,7 @@ private:
     ros::Publisher heading_publisher_;
     ros::Publisher heading_cmd_publisher_;
 
-    ros::Publisher des_state_publisher_;
+
     
     geometry_msgs::Twist twist_cmd_; 
     
@@ -75,8 +74,6 @@ private:
     double state_omega_;
     
     geometry_msgs::Quaternion state_quat_; 
-
-    std::queue<nav_msgs::Odometry> des_queue;
     
     //state values from desired state; these will get filled in by desStateCallback 
     double des_state_x_;

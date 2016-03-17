@@ -7,11 +7,13 @@
 #include "rh_nl_steering.h"
 
 //CONSTRUCTOR:  
-SteeringController::SteeringController(ros::NodeHandle* nodehandle):nh_(*nodehandle)
+SteeringController::SteeringController(ros::NodeHandle* nodehandle):nh_(*nodehandle) 
 { // constructor
     ROS_INFO("in class constructor of SteeringController");
     initializeSubscribers(); // package up the messy work of creating subscribers; do this overhead in constructor
     initializePublishers();
+
+
     
     state_psi_ = 1000.0; // put in impossible value for heading; 
     //test this value to make sure we have received a viable state message
@@ -131,6 +133,9 @@ void SteeringController::mobot_nl_steering() {
     double nx = -ty; //components [nx, ny] of normal to path, points to left of desired heading
     double ny = tx;   
     
+    ROS_INFO(" CURRENT STATE X: %f", state_x_);
+    ROS_INFO(" CURRENT STATE Y: %f", state_y_);
+    
     double dx = state_x_ - des_state_x_;  //x-error relative to desired path
     double dy = state_y_ - des_state_y_;  //y-error
 
@@ -142,11 +147,13 @@ void SteeringController::mobot_nl_steering() {
     double strategy_psi = psi_strategy(lateral_err_); //heading command, based on NL algorithm    
     controller_omega = omega_cmd_fnc(strategy_psi, state_psi_, des_state_psi_);
 
-    controller_speed = MAX_SPEED; //default...should speed up/slow down appropriately
-    
+    //controller_speed = MAX_SPEED; //default...should speed up/slow down appropriately
+    controller_speed = des_state_speed_;
     // send out our speed/spin commands:
     twist_cmd_.linear.x = controller_speed;
+
     twist_cmd_.angular.z = controller_omega;
+
     cmd_publisher_.publish(twist_cmd_);  
         
     // DEBUG OUTPUT...
@@ -172,24 +179,6 @@ double SteeringController::omega_cmd_fnc(double psi_strategy, double psi_state, 
   double omega_cmd = K_PSI*(psi_cmd_ - psi_state);
   omega_cmd = MAX_OMEGA*sat(omega_cmd/MAX_OMEGA); //saturate the command at specified limit
   return omega_cmd;
-}
-
-geometry_msgs::Quaternion SteeringController::convertPlanarPsi2Quaternion(double psi) {
-	geometry_msgs::Quaternion quaternion;
-	quaternion.x = 0.0;
-	quaternion.y = 0.0;
-	quaternion.z = sin(psi / 2.0);
-	quaternion.w = cos(psi / 2.0);
-	return (quaternion);
-}
-
-geometry_msgs::PoseStamped SteeringController::xyPsi2PoseStamped(double x, double y, double psi) {
-	geometry_msgs::PoseStamped poseStamped; // a pose object to populate
-	poseStamped.pose.orientation = convertPlanarPsi2Quaternion(psi); // convert from heading to corresponding quaternion
-	poseStamped.pose.position.x = x; // keep the robot on the ground!
-	poseStamped.pose.position.y = y; // keep the robot on the ground!
-	poseStamped.pose.position.z = 0.0; // keep the robot on the ground!
-	return poseStamped;
 }
 
 int main(int argc, char** argv) 
