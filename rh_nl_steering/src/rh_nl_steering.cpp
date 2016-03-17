@@ -174,6 +174,24 @@ double SteeringController::omega_cmd_fnc(double psi_strategy, double psi_state, 
   return omega_cmd;
 }
 
+geometry_msgs::Quaternion SteeringController::convertPlanarPsi2Quaternion(double psi) {
+	geometry_msgs::Quaternion quaternion;
+	quaternion.x = 0.0;
+	quaternion.y = 0.0;
+	quaternion.z = sin(psi / 2.0);
+	quaternion.w = cos(psi / 2.0);
+	return (quaternion);
+}
+
+geometry_msgs::PoseStamped SteeringController::xyPsi2PoseStamped(double x, double y, double psi) {
+	geometry_msgs::PoseStamped poseStamped; // a pose object to populate
+	poseStamped.pose.orientation = convertPlanarPsi2Quaternion(psi); // convert from heading to corresponding quaternion
+	poseStamped.pose.position.x = x; // keep the robot on the ground!
+	poseStamped.pose.position.y = y; // keep the robot on the ground!
+	poseStamped.pose.position.z = 0.0; // keep the robot on the ground!
+	return poseStamped;
+}
+
 int main(int argc, char** argv) 
 {
     // ROS set-ups:

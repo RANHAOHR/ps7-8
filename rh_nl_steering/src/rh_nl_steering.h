@@ -41,6 +41,9 @@ public:
     double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);   
     double min_dang(double dang);  
     double sat(double x);
+	
+	geometry_msgs::Quaternion SteeringController::convertPlanarPsi2Quaternion(double psi);
+	geometry_msgs::PoseStamped SteeringController::xyPsi2PoseStamped(double x, double y, double psi);
 private:
     ros::NodeHandle nh_; // we will need this, to pass between "main" and constructor
     // some objects to support subscriber and publisher
