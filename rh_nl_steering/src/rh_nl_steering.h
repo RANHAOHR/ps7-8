@@ -23,8 +23,8 @@
 #include <std_msgs/Float32.h>
 
 const double UPDATE_RATE = 100.0; // choose the update rate for steering controller
-const double K_PSI= 5.0; // control gains for steering
-const double K_LAT_ERR_THRESH = 3.0;
+const double K_PSI= 6.0; // control gains for steering
+const double K_LAT_ERR_THRESH = 6.0;
 // dynamic limitations:  
 const double MAX_SPEED = 1.0; // m/sec; tune this
 const double MAX_OMEGA = 1.0; // rad/sec; tune this

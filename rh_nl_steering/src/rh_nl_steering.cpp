@@ -12,9 +12,7 @@ SteeringController::SteeringController(ros::NodeHandle* nodehandle):nh_(*nodehan
     ROS_INFO("in class constructor of SteeringController");
     initializeSubscribers(); // package up the messy work of creating subscribers; do this overhead in constructor
     initializePublishers();
-
-
-    
+ 
     state_psi_ = 1000.0; // put in impossible value for heading; 
     //test this value to make sure we have received a viable state message
     ROS_INFO("waiting for valid state message...");
@@ -119,7 +117,6 @@ double SteeringController::convertPlanarQuat2Phi(geometry_msgs::Quaternion quate
     double phi = 2.0 * atan2(quat_z, quat_w); // cheap conversion from quaternion to heading for planar motion
     return phi;
 }
-
 
 // HERE IS THE STEERING ALGORITHM: USE DESIRED AND ACTUAL STATE TO COMPUTE AND PUBLISH CMD_VEL
 void SteeringController::mobot_nl_steering() {
