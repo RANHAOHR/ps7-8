@@ -24,7 +24,7 @@ nav_msgs::Odometry get_state() {
 	quaternion.z = sin(psi / 2.0);
 	quaternion.w = cos(psi / 2.0);
 
-    des_state.pose.pose.orientation = quaternion;
+  des_state.pose.pose.orientation = quaternion;
 	des_state.pose.pose.position.x = x; // keep the robot on the ground!
 	des_state.pose.pose.position.y = y;
 	des_state.pose.pose.position.z = 0.0;

@@ -49,8 +49,8 @@ SteeringController::SteeringController(ros::NodeHandle* nodehandle):nh_(*nodehan
 void SteeringController::initializeSubscribers() {
     ROS_INFO("Initializing Subscribers: gazebo state and desState");
         //subscribe to gazebo messages; ONLY works in simulation
-    current_state_subscriber_ = nh_.subscribe("gazebo_mobot_pose", 1, &SteeringController::gazeboPoseCallback, this); 
-
+    //current_state_subscriber_ = nh_.subscribe("gazebo_mobot_pose", 1, &SteeringController::gazeboPoseCallback, this); 
+    current_state_subscriber_ = nh_.subscribe("/odom", 1, &SteeringController::OdomCallback, this); 
     // subscribe to desired-state publications
     des_state_subscriber_ = nh_.subscribe("/desState", 1, &SteeringController::desStateCallback, this); 
 }
@@ -60,7 +60,7 @@ void SteeringController::initializeSubscribers() {
 void SteeringController::initializePublishers()
 {
     ROS_INFO("Initializing Publishers"); //: cmd_vel and cmd_vel_stamped");
-    cmd_publisher_ = nh_.advertise<geometry_msgs::Twist>("cmd_vel", 1, true); // commands the robot!
+    cmd_publisher_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 1, true); // commands the robot!
     //next three are just for debug output, plotable by rqt_plot
     heading_publisher_= nh_.advertise<std_msgs::Float32>("heading", 1, true);
     heading_cmd_publisher_ = nh_.advertise<std_msgs::Float32>("heading_cmd", 1, true);
@@ -69,10 +69,18 @@ void SteeringController::initializePublishers()
 
 //receive publications from gazebo via node mobot_gazebo_state;
 // this stands in for a state estimator; for a real system need to create such a node
+/*
 void SteeringController::gazeboPoseCallback(const geometry_msgs::Pose& gazebo_pose) {
    state_x_ = gazebo_pose.position.x; //copy the state to member variables of this object
    state_y_ = gazebo_pose.position.y;
    state_quat_ = gazebo_pose.orientation;
+   state_psi_ = convertPlanarQuat2Phi(state_quat_);
+}
+*/
+void SteeringController::OdomCallback(const nav_msgs::Odometry& odom_pose) {
+   state_x_ = odom_pose.pose.pose.position.x; //copy the state to member variables of this object
+   state_y_ = odom_pose.pose.pose.position.y;
+   state_quat_ = odom_pose.pose.pose.orientation;
    state_psi_ = convertPlanarQuat2Phi(state_quat_);
 }
 

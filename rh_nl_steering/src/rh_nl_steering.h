@@ -90,7 +90,8 @@ private:
     void initializeSubscribers(); 
     void initializePublishers();
  
-    void gazeboPoseCallback(const geometry_msgs::Pose& gazebo_pose);
+   // void gazeboPoseCallback(const geometry_msgs::Pose& gazebo_pose);
+    void OdomCallback(const nav_msgs::Odometry& odom_pose);
     void desStateCallback(const nav_msgs::Odometry& des_state_rcvd);    
 }; // end of class definition
 
