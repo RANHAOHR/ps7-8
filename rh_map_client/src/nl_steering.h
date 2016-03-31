@@ -41,7 +41,11 @@ public:
     double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);   
     double min_dang(double dang);  
     double sat(double x);
-
+	
+	//add funcs 
+	geometry_msgs::Quaternion SteeringController::convertPlanarPhi2Quaternion(double phi);
+	void SteeringController::getDesState( geometry_msgs::PoseStamped des_state_rcvd);
+    void SteeringController::getStateVec();
 
 private:
     ros::NodeHandle nh_; // we will need this, to pass between "main" and constructor
@@ -92,7 +96,7 @@ private:
  
   //  void gazeboPoseCallback(const geometry_msgs::Pose& gazebo_pose);
     void OdomCallback(const nav_msgs::Odometry& odom_pose);
-    void desStateCallback(const nav_msgs::Odometry& des_state_rcvd);    
+    //void desStateCallback(const nav_msgs::Odometry& des_state_rcvd); 	
 }; // end of class definition
 
 #endif  // this closes the header-include trick...ALWAYS need one of these to match #ifndef

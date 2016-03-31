@@ -6,6 +6,8 @@
 // this header incorporates all the necessary #include files and defines the class "SteeringController"
 #include "nl_steering.h"
 
+using namespace std;
+
 //CONSTRUCTOR:  
 SteeringController::SteeringController(ros::NodeHandle* nodehandle):nh_(*nodehandle) 
 { // constructor
@@ -85,17 +87,49 @@ void SteeringController::OdomCallback(const nav_msgs::Odometry& odom_pose) {
 }
 
 //use this if a desired state is being published
-void SteeringController::getDesState(){
+//*********************************************************************************************************
+geometry_msgs::Quaternion SteeringController::convertPlanarPhi2Quaternion(double phi) {
+    geometry_msgs::Quaternion quaternion;
+    quaternion.x = 0.0;
+    quaternion.y = 0.0;
+    quaternion.z = sin(phi / 2.0);
+    quaternion.w = cos(phi / 2.0);
+    return quaternion;
+}
+void SteeringController::getDesState( geometry_msgs::PoseStamped des_state_rcvd){
     des_state_speed_ = 0.5;
     des_state_omega_ = 0;
     
-    des_state_x_ = des_state_rcvd.pose.pose.position.x;
-    des_state_y_ = des_state_rcvd.pose.pose.position.y;
-    des_state_pose_ = des_state_rcvd.pose.pose;    
-    des_state_quat_ = des_state_rcvd.pose.pose.orientation;
+    des_state_x_ = des_state_rcvd.pose.position.x;
+    des_state_y_ = des_state_rcvd.pose.position.y;  
+    des_state_quat_ = des_state_rcvd.pose.orientation;
     //Convert quaternion to simple heading
     des_state_psi_ = convertPlanarQuat2Phi(des_state_quat_);
 }
+
+std::vector<geometry_msgs::PoseStamped> des_state_vec;//// may want to use directly in main
+
+void SteeringController::getStateVec(){   
+	geometry_msgs::PoseStamped pose;
+	geometry_msgs::Quaternion quat
+	
+	pose.header.frame_id = "world";// may not be useful
+	
+	pose.position.x = 3.0; // say desired x-coord is 3
+    pose.position.y = 0.0;
+    pose.position.z = 0.0; // let's hope so!
+    quat = convertPlanarPhi2Quaternion(0);
+	pose.orientation = quat;
+	des_state_vec.push_back(pose);
+	
+	pose.position.x = 3.0; // say desired x-coord is 3
+    pose.position.y = 3.0;
+    quat = convertPlanarPhi2Quaternion(1.57);
+	pose.orientation = quat;
+	des_state_vec.push_back(pose);
+	
+}
+//*************************************************************************************************************
 /*
 void SteeringController::desStateCallback(const nav_msgs::Odometry& des_state_rcvd) {
     // copy some of the components of the received message into member vars
@@ -213,9 +247,16 @@ int main(int argc, char** argv)
     ros::Rate sleep_timer(UPDATE_RATE); //a timer for desired rate, e.g. 50Hz
    
     ROS_INFO:("starting steering algorithm");
-    while (ros::ok()) {
+	steeringController.getStateVec();
+	int pose_size = des_state_vec.size();
+	geometry_msgs::PoseStamped temp_vec;
+	
+    for (int i = 0; i < pose_size; i++) {
         // compute and publish twist commands 
+		temp_vec.pose = des_state_vec[i];
+		steeringController.getDesState(temp_vec);   //change the des speed and orientation
         steeringController.mobot_nl_steering(); 
+				
         ros::spinOnce();
         sleep_timer.sleep();
     }
