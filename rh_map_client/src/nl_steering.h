@@ -24,7 +24,7 @@
 
 const double UPDATE_RATE = 100.0; // choose the update rate for steering controller
 const double K_PSI= 5.0; // control gains for steering
-const double K_LAT_ERR_THRESH = 0.3;
+const double K_LAT_ERR_THRESH = 3;
 // dynamic limitations:  
 const double MAX_SPEED = 1.0; // m/sec; tune this
 const double MAX_OMEGA = 1.0; // rad/sec; tune this
@@ -43,9 +43,9 @@ public:
     double sat(double x);
 	
 	//add funcs 
-	geometry_msgs::Quaternion SteeringController::convertPlanarPhi2Quaternion(double phi);
-	void SteeringController::getDesState( geometry_msgs::PoseStamped des_state_rcvd);
-    void SteeringController::getStateVec();
+//	geometry_msgs::Quaternion SteeringController::convertPlanarPhi2Quaternion(double phi);
+//	void SteeringController::getDesState( geometry_msgs::PoseStamped des_state_rcvd);
+//    void SteeringController::getStateVec();
 
 private:
     ros::NodeHandle nh_; // we will need this, to pass between "main" and constructor
@@ -96,7 +96,7 @@ private:
  
   //  void gazeboPoseCallback(const geometry_msgs::Pose& gazebo_pose);
     void OdomCallback(const nav_msgs::Odometry& odom_pose);
-    //void desStateCallback(const nav_msgs::Odometry& des_state_rcvd); 	
+    void desStateCallback(const nav_msgs::Odometry& des_state_rcvd); 	
 }; // end of class definition
 
 #endif  // this closes the header-include trick...ALWAYS need one of these to match #ifndef

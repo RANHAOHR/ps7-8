@@ -54,7 +54,7 @@ void SteeringController::initializeSubscribers() {
     //current_state_subscriber_ = nh_.subscribe("gazebo_mobot_pose", 1, &SteeringController::gazeboPoseCallback, this); 
     current_state_subscriber_ = nh_.subscribe("/odom", 1, &SteeringController::OdomCallback, this); 
     // subscribe to desired-state publications
- //   des_state_subscriber_ = nh_.subscribe("/desState", 1, &SteeringController::desStateCallback, this); 
+    des_state_subscriber_ = nh_.subscribe("/desState", 1, &SteeringController::desStateCallback, this); 
 }
 
 
@@ -87,7 +87,7 @@ void SteeringController::OdomCallback(const nav_msgs::Odometry& odom_pose) {
 }
 
 //use this if a desired state is being published
-//*********************************************************************************************************
+/*********************************************************************************************************
 geometry_msgs::Quaternion SteeringController::convertPlanarPhi2Quaternion(double phi) {
     geometry_msgs::Quaternion quaternion;
     quaternion.x = 0.0;
@@ -129,8 +129,8 @@ void SteeringController::getStateVec(){
 	des_state_vec.push_back(pose);
 	
 }
-//*************************************************************************************************************
-/*
+***************************************************************************************/
+
 void SteeringController::desStateCallback(const nav_msgs::Odometry& des_state_rcvd) {
     // copy some of the components of the received message into member vars
     // we care about speed and spin, as well as position estimates x,y and heading
@@ -144,8 +144,9 @@ void SteeringController::desStateCallback(const nav_msgs::Odometry& des_state_rc
     //Convert quaternion to simple heading
     des_state_psi_ = convertPlanarQuat2Phi(des_state_quat_);   
 }
-*/
+
 //utility fnc to compute min delta angle, accounting for periodicity
+
 double SteeringController::min_dang(double dang) {
     while (dang > M_PI) dang -= 2.0 * M_PI;
     while (dang < -M_PI) dang += 2.0 * M_PI;
@@ -247,19 +248,21 @@ int main(int argc, char** argv)
     ros::Rate sleep_timer(UPDATE_RATE); //a timer for desired rate, e.g. 50Hz
    
     ROS_INFO:("starting steering algorithm");
-	steeringController.getStateVec();
-	int pose_size = des_state_vec.size();
-	geometry_msgs::PoseStamped temp_vec;
+//	steeringController.getStateVec();
+//	int pose_size = des_state_vec.size();
+//	geometry_msgs::PoseStamped temp_vec;
 	
-    for (int i = 0; i < pose_size; i++) {
+ //   for (int i = 0; i < pose_size; i++) {
+    while(ros::ok()){
         // compute and publish twist commands 
-		temp_vec.pose = des_state_vec[i];
-		steeringController.getDesState(temp_vec);   //change the des speed and orientation
-        steeringController.mobot_nl_steering(); 
-				
+        steeringController.mobot_nl_steering();                 
         ros::spinOnce();
         sleep_timer.sleep();
     }
+//		temp_vec.pose = des_state_vec[i];
+//		steeringController.getDesState(temp_vec);   //change the des speed and orientation
+
+    //}
     return 0;
 } 
 

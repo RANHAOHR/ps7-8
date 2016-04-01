@@ -29,7 +29,7 @@ catkin_simple()
 
 # Executables: uncomment the following and edit arguments to compile new nodes
 # may add more of these lines for more nodes from the same package
- cs_add_executable(rh_path_client src/rh_path_client_3mx3m_sqr.cpp)
+ cs_add_executable(amcl_path_client src/amcl_steering_main.cpp)
  cs_add_executable(nl_steering src/nl_steering.cpp)
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
