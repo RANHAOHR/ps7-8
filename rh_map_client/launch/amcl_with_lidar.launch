@@ -1,9 +1,0 @@
-<launch>
-
-<include file="$(find gazebo_ros)/launch/empty_world.launch"/>
-
-<include file="$(find mobot_urdf)/launch/mobot_startup_open_loop.launch"/>
-
-<rosparam command="load" file="$(find rh_map_client)/rhMap1.yaml"/>
-
-</launch>
